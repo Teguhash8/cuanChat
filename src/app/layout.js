@@ -36,21 +36,30 @@ export default function RootLayout({ children }) {
         }
     }, [pathname]);
 
+    // Close sidebar on route change (mobile)
+    useEffect(() => {
+        setSidebarOpen(false);
+    }, [pathname]);
+
     // Auth pages render without layout
     if (isAuthPage) {
         return (
-            <html lang="id"><body style={{ margin: 0, background: '#0a0a0a' }}>{children}</body></html>
+            <html lang="id">
+                <body className="bg-[#0a0a0a] m-0">{children}</body>
+            </html>
         );
     }
 
     if (!authChecked) {
         return (
-            <html lang="id"><body style={{ margin: 0, background: '#0a0a0a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '1rem', animation: 'pulse 1.5s infinite' }}>💰</div>
-                    <p style={{ color: '#94a3b8' }}>Memuat CuanChat...</p>
-                </div>
-            </body></html>
+            <html lang="id">
+                <body className="bg-[#0a0a0a] text-white flex items-center justify-center min-h-screen m-0">
+                    <div className="text-center">
+                        <div className="text-4xl mb-4 animate-pulse">💰</div>
+                        <p className="text-slate-400">Memuat CuanChat...</p>
+                    </div>
+                </body>
+            </html>
         );
     }
 
@@ -58,110 +67,100 @@ export default function RootLayout({ children }) {
 
     return (
         <html lang="id">
-            <body style={{ margin: 0, background: '#0a0a0a', color: '#fff', fontFamily: "'Inter', system-ui, sans-serif" }}>
+            <body className="bg-[#0a0a0a] text-white font-sans m-0">
                 {/* Mobile overlay */}
-                {sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40 }} />}
+                {sidebarOpen && (
+                    <div 
+                        onClick={() => setSidebarOpen(false)} 
+                        className="fixed inset-0 bg-black/60 z-40 md:hidden"
+                    />
+                )}
 
                 {/* Sidebar */}
-                <aside style={{
-                    position: 'fixed', top: 0, left: 0, bottom: 0, width: '260px',
-                    background: 'rgba(15,15,25,0.95)', backdropFilter: 'blur(20px)',
-                    borderRight: '1px solid rgba(255,255,255,0.08)', padding: '1.5rem 0',
-                    zIndex: 50, transition: 'transform 0.3s ease',
-                    transform: sidebarOpen ? 'translateX(0)' : (typeof window !== 'undefined' && window.innerWidth < 768 ? 'translateX(-100%)' : 'translateX(0)'),
-                }}>
+                <aside className={`
+                    fixed top-0 left-0 bottom-0 w-[260px]
+                    bg-[#0f0f19]/95 backdrop-blur-xl border-r border-white/10
+                    z-50 transition-transform duration-300 ease-in-out
+                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                `}>
                     {/* Logo */}
-                    <div style={{ padding: '0 1.5rem', marginBottom: '2rem' }}>
-                        <div style={{
-                            fontSize: '1.5rem', fontWeight: '800',
-                            background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-                            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                        }}>💰 CuanChat</div>
-                        <p style={{ color: '#475569', fontSize: '0.75rem', marginTop: '0.25rem' }}>Smart Finance Tracker</p>
+                    <div className="px-6 py-6 mb-4">
+                        <div className="text-2xl font-extrabold bg-gradient-to-br from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                            💰 CuanChat
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Smart Finance Tracker</p>
                     </div>
 
                     {/* Navigation */}
-                    <nav style={{ padding: '0 0.75rem' }}>
+                    <nav className="px-3 space-y-1">
                         {navItems.map((item) => {
                             const isActive = pathname === item.href;
                             return (
-                                <a key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: '0.75rem',
-                                        padding: '0.75rem 1rem', borderRadius: '12px', marginBottom: '0.25rem',
-                                        textDecoration: 'none', transition: 'all 0.2s',
-                                        background: isActive ? 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.15))' : 'transparent',
-                                        color: isActive ? '#10b981' : '#94a3b8',
-                                        borderLeft: isActive ? '3px solid #10b981' : '3px solid transparent',
-                                    }}>
-                                    <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
-                                    <span style={{ fontSize: '0.9rem', fontWeight: isActive ? '600' : '400' }}>{item.label}</span>
+                                <a 
+                                    key={item.href} 
+                                    href={item.href}
+                                    className={`
+                                        flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 no-underline
+                                        ${isActive 
+                                            ? 'bg-gradient-to-br from-emerald-500/15 to-cyan-500/15 text-emerald-400 border-l-2 border-emerald-500 ' 
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-l-2 border-transparent'}
+                                    `}
+                                >
+                                    <span className="text-xl">{item.icon}</span>
+                                    <span className={`text-sm ${isActive ? 'font-semibold' : 'font-normal'}`}>{item.label}</span>
                                 </a>
                             );
                         })}
                     </nav>
 
                     {/* User Info & Logout */}
-                    <div style={{ position: 'absolute', bottom: '1rem', left: 0, right: 0, padding: '0 1rem' }}>
-                        <div style={{
-                            background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '0.75rem 1rem',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        }}>
-                            <div>
-                                <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#e2e8f0' }}>
+                    <div className="absolute bottom-4 left-0 right-0 px-4">
+                        <div className="bg-white/5 rounded-xl p-3 flex items-center justify-between border border-white/5">
+                            <div className="overflow-hidden">
+                                <div className="text-sm font-semibold text-slate-200 truncate">
                                     {user?.name || 'User'}
                                 </div>
-                                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{user?.email || ''}</div>
+                                <div className="text-xs text-slate-500 truncate">{user?.email || ''}</div>
                             </div>
                             <button onClick={logout}
-                                style={{
-                                    background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.2)',
-                                    borderRadius: '8px', padding: '0.4rem 0.6rem', cursor: 'pointer',
-                                    color: '#ef4444', fontSize: '0.8rem',
-                                }}
-                                title="Logout">🚪</button>
+                                className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-colors"
+                                title="Logout">
+                                🚪
+                            </button>
                         </div>
                     </div>
                 </aside>
 
                 {/* Main Content */}
-                <div style={{ marginLeft: '260px', minHeight: '100vh' }}>
+                <div className="flex flex-col min-h-screen transition-[margin] duration-300 md:ml-[260px]">
                     {/* Header */}
-                    <header style={{
-                        position: 'sticky', top: 0, zIndex: 30,
-                        background: 'rgba(10,10,10,0.8)', backdropFilter: 'blur(15px)',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '0.75rem 1.5rem',
-                    }}>
-                        {/* Mobile hamburger */}
-                        <button onClick={() => setSidebarOpen(true)}
-                            className="mobile-only"
-                            style={{
-                                display: 'none', background: 'none', border: 'none', color: '#fff',
-                                fontSize: '1.5rem', cursor: 'pointer', padding: '0.25rem',
-                            }}>☰</button>
-                        <div>
-                            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: '#e2e8f0' }}>
-                                {navItems.find(n => n.href === pathname)?.label || 'CuanChat'}
-                            </h2>
-                            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{today}</p>
+                    <header className="sticky top-0 z-30 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 px-6 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            {/* Mobile hamburger */}
+                            <button 
+                                onClick={() => setSidebarOpen(true)}
+                                className="md:hidden text-2xl text-white p-1 -ml-2"
+                            >
+                                ☰
+                            </button>
+                            <div>
+                                <h2 className="text-lg font-semibold text-slate-200 m-0">
+                                    {navItems.find(n => n.href === pathname)?.label || 'CuanChat'}
+                                </h2>
+                                <p className="text-xs text-slate-500 m-0 hidden sm:block">{today}</p>
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>👋 Halo, {user?.name?.split(' ')[0] || 'User'}</span>
+                        
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-slate-400">👋 Halo, <span className="hidden sm:inline">{user?.name?.split(' ')[0] || 'User'}</span></span>
                         </div>
                     </header>
 
                     {/* Page content */}
-                    <main style={{ padding: '1.5rem' }}>{children}</main>
+                    <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
+                        {children}
+                    </main>
                 </div>
-
-                <style>{`
-          @media (max-width: 768px) {
-            .mobile-only { display: block !important; }
-            body > div:last-child > div { margin-left: 0 !important; }
-          }
-        `}</style>
             </body>
         </html>
     );
