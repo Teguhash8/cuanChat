@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Next.js build
+.next/
+out/
+
+# Database (contains user data)
+*.db
+
+# Uploaded files (user photos, voice notes)
+server/uploads/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*

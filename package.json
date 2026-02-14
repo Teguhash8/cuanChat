@@ -1,0 +1,33 @@
+{
+  "name": "cuanchat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:next\"",
+    "dev:next": "next dev -p 3000",
+    "dev:server": "node server/index.js",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.0",
+    "next": "^16.1.6",
+    "papaparse": "^5.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.12.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "sql.js": "^1.10.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "jest": "^29.7.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0"
+  }
+}
